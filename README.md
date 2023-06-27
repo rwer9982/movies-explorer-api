@@ -1,7 +1,3 @@
-[![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml)
-# Проект Mesto фронтенд + бэкенд
-
-
 ## Директории
 
 `/routes` — папка с файлами роутера  
@@ -16,4 +12,8 @@
 `npm run dev` — запускает сервер с hot-reload
 
 
-Ссылка на репозиторий: https://github.com/rwer9982/express-mesto-gha
+Ссылка на репозиторий: https://github.com/rwer9982/movies-explorer-api
+
+IP сервера: 51.250.75.62
+
+домен: https://api.rwer9982.nomoredomains.monster
