@@ -1,17 +1,19 @@
 require('dotenv').config();
+
 const express = require('express');
-// const path = require('path');
+
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
 const routes = require('./routes');
-const { createUser, login } = require('./controllers/users');
-const { joiErrorsCreateUser, joiErrorsLogin } = require('./errors/joiErrors');
-const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const { PORT = 3000 } = process.env;
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { limiter } = require('./middlewares/limiter');
+
+const { PORT = 3000, NODE_ENV, URL } = process.env;
 const app = express();
 
 const allowedCors = {
@@ -35,7 +37,7 @@ const allowedCors = {
 
 app.use(cors(allowedCors));
 
-mongoose.connect('mongodb://127.0.0.1:27017/moviesdb', {
+mongoose.connect(NODE_ENV === 'production' ? URL : 'mongodb://localhost:27017/bitfilmsdb', {
   //  useNewUrlParser: true,
   //  useCreateIndex: true,
   //  useFindAndModify: false,
@@ -43,6 +45,8 @@ mongoose.connect('mongodb://127.0.0.1:27017/moviesdb', {
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(helmet());
+app.use(limiter);
 
 app.use(requestLogger);
 
@@ -52,9 +56,7 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.use(cookieParser());//
-app.post('/signin', joiErrorsLogin, login);
-app.post('/signup', joiErrorsCreateUser, createUser);
+app.use(cookieParser());
 
 app.use(routes);
 

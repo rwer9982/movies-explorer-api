@@ -46,7 +46,8 @@ const createMovie = (req, res, next) => {
 };
 
 const getMovies = (req, res, next) => {
-  Movie.find({})
+  const ownerId = req.user._id;
+  Movie.find({ owner: ownerId })
     .then((users) => res.status(STATUS_OK).send(users))
     .catch((err) => next(err));
 };
@@ -55,10 +56,10 @@ const deleteMovie = (req, res, next) => {
   const { movieId } = req.params;
   const userId = req.user._id;
   Movie.findById({ _id: movieId })
-    .orFail(() => new NotFoundError('Карточка с указанным id не существует'))
+    .orFail(() => new NotFoundError('Запись с указанным id не существует'))
     .then((movie) => {
       if (!movie.owner.equals(userId)) {
-        throw new NoAccessError('Карточку может удалить только её создатель');
+        throw new NoAccessError('Запись может удалить только её создатель');
       }
       return Movie.findByIdAndRemove({ _id: movieId });
     })
